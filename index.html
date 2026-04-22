@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>项目展示</title>
+<!-- Swiper 11.2.10 -->
+<link rel="stylesheet" href="css/swiper-bundle.min.css"/>
+<!-- Fancybox -->
+<link rel="stylesheet" href="css/fancybox.css"/>
+<!-- Main style -->
+<link rel="stylesheet" href="css/style.css"/>
+<!-- Swiper 11.2.10 -->
+<script src="js/swiper-bundle.min.js"></script>
+<!-- Fancybox v4.0.31 -->
+<script src="js/fancybox.umd.js"></script>
+</head>
+
+<body>
+
+<div class="container">
+  <h1>网站项目展示</h1>
+  <div class="grid" id="projectList"></div>
+</div>
+
+<script>
+    const projects = [
+      { id: "project01", title: "网站01", images: ["1.webp", "2.webp", "3.webp", "4.webp", "5.webp", "6.webp"] },
+      { id: "project02", title: "网站02", images: ["1.webp", "2.webp", "3.webp", "4.webp"] },
+      { id: "project03", title: "网站03", images: ["1.webp", "2.webp", "3.webp"] },
+      { id: "project04", title: "网站04", images: ["1.webp", "2.webp", "3.webp"] },
+      { id: "project05", title: "网站05", images: ["1.webp", "2.webp", "3.webp"] },
+      { id: "project06", title: "网站06", images: ["1.webp", "2.webp", "3.webp"] },
+      // 后续新增项目时，按上面的格式补充 images 数组即可
+    ];
+
+    const container = document.getElementById("projectList");
+
+    // 根据配置渲染当前卡片的全部图片，避免再去猜测不存在的文件名
+    function renderSlides(project, wrapper) {
+      const imageList = Array.isArray(project.images) ? project.images : [];
+
+      imageList.forEach((fileName) => {
+        const src = `images/${project.id}/${fileName}`;
+        const slide = document.createElement("div");
+        slide.className = "swiper-slide";
+
+        slide.innerHTML = `
+          <a href="${src}" data-fancybox="${project.id}">
+            <img src="${src}" loading="lazy" alt="${project.title}"/>
+          </a>
+        `;
+
+        wrapper.appendChild(slide);
+      });
+    }
+
+    // 创建卡片
+    projects.forEach((project, i) => {
+      const card = document.createElement("div");
+      card.className = "card lazy-card";
+      card.dataset.index = i;
+
+      card.innerHTML = `
+        <div class="swiper swiper-${i}">
+          <div class="swiper-wrapper"></div>
+          <div class="swiper-pagination swiper-pagination-${i}"></div>
+        </div>
+        <div class="card-title">${project.title}</div>
+      `;
+
+      card._projectData = project;
+      container.appendChild(card);
+    });
+
+    // 按进入视口时再初始化，兼顾性能
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+
+        const card = entry.target;
+        const index = card.dataset.index;
+        const project = card._projectData;
+        const wrapper = card.querySelector(".swiper-wrapper");
+
+        if (card.dataset.loaded) return;
+        card.dataset.loaded = "true";
+
+        renderSlides(project, wrapper);
+
+        const imageCount = Array.isArray(project.images) ? project.images.length : 0;
+
+        new Swiper(`.swiper-${index}`, {
+          loop: imageCount > 1,
+          observer: true,
+          observeParents: true,
+          watchOverflow: true,
+          pagination: {
+            el: `.swiper-pagination-${index}`,
+            clickable: true,
+          },
+        });
+
+        observer.unobserve(card);
+      });
+    }, {
+      rootMargin: "100px"
+    });
+
+    document.querySelectorAll(".lazy-card").forEach(card => {
+      observer.observe(card);
+    });
+
+    Fancybox.bind("[data-fancybox]", {
+      Toolbar: {
+        display: ["close"]
+      }
+    });
+</script>
+
+
+</body>
+</html>
