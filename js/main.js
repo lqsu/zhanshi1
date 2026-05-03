@@ -1,12 +1,12 @@
 // 项目配置：后续新增案例时，只需要继续补充这个数组即可。
 // url 如果暂时没有真实链接，可以保留为 "#"，按钮会显示为禁用状态。
 const projects = [
-  { id: "project01", title: "惠普28A", url: "#", images: ["1.png", "2.webp", "3.webp", "4.webp", "5.webp", "6.webp"] },
-  { id: "project02", title: "网站02", url: "#", images: ["1.webp", "2.webp", "3.webp", "4.webp"] },
-  { id: "project03", title: "网站03", url: "#", images: ["1.webp", "2.webp", "3.webp"] },
-  { id: "project04", title: "网站04", url: "#", images: ["1.webp", "2.webp", "3.webp"] },
-  { id: "project05", title: "网站05", url: "#", images: ["1.webp", "2.webp", "3.webp"] },
-  { id: "project06", title: "网站06", url: "#", images: ["1.webp", "2.webp", "3.webp"] },
+  { id: "project01", title: "惠普28A", url: "https://znjc025.com", images: ["1.png", "2.webp", "3.webp", "4.webp", "5.webp", "6.webp"] },
+  { id: "project02", title: "网站02", url: "https://znjc025.com", images: ["1.webp", "2.webp", "3.webp", "4.webp"] },
+  { id: "project03", title: "网站03", url: "https://znjc025.com", images: ["1.webp", "2.webp", "3.webp"] },
+  { id: "project04", title: "网站04", url: "https://znjc025.com", images: ["1.webp", "2.webp", "3.webp"] },
+  { id: "project05", title: "网站05", url: "https://znjc025.com", images: ["1.webp", "2.webp", "3.webp"] },
+  { id: "project06", title: "网站06", url: "https://znjc025.com", images: ["1.webp", "2.webp", "3.webp"] },
 ];
 
 const container = document.getElementById("projectList");
@@ -48,7 +48,7 @@ function createVisitButton(project) {
   const hasUrl = project.url && project.url !== "#";
 
   if (!hasUrl) {
-    return `<span class="visit-btn visit-btn--disabled" aria-disabled="true">Visit Website</span>`;
+    return `<span class="visit-btn visit-btn--disabled" aria-disabled="true">回到主页</span>`;
   }
 
   return `
