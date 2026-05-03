@@ -99,7 +99,7 @@ function createVisitButton(project) {
     return `<span class="visit-btn visit-btn--disabled" aria-disabled="true">回到主页</span>`;
   }
   return `
-    <a class="visit-btn" href="${escapeHtml(project.url)}" target="_blank" rel="noopener noreferrer">Visit Website</a>
+    <a class="visit-btn" href="${escapeHtml(project.url)}" target="_blank" rel="noopener noreferrer">返回主页</a>
   `;
 }
 
