@@ -60,6 +60,8 @@ function createVisitButton(project) {
 
 projects.forEach((project, index) => {
   const card = document.createElement("article");
+  // ✅ 在这里加上这行，给卡片加 ID
+  card.id = escapeHtml(project.id);
   card.className = "card lazy-card";
   card.dataset.index = index;
 
@@ -128,5 +130,24 @@ document.querySelectorAll(".lazy-card").forEach(card => {
 Fancybox.bind("[data-fancybox]", {
   Toolbar: {
     display: ["close"]
+  },
+  // 页面加载后自动跳转到哈希对应的项目卡片
+window.addEventListener('DOMContentLoaded', () => {
+  const hash = window.location.hash.slice(1); // 去掉 #
+  if (!hash) return;
+
+  // 支持 #project04 或 #project04-1 这种格式
+  const targetId = hash.split('-')[0];
+  const targetEl = document.getElementById(targetId);
+
+  if (targetEl) {
+    // 等页面渲染完成再滚动，避免错位
+    setTimeout(() => {
+      targetEl.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }, 100);
   }
+});
 });
