@@ -131,6 +131,7 @@ Fancybox.bind("[data-fancybox]", {
   Toolbar: {
     display: ["close"]
   },
+   hideScrollbar: false, // 关闭时不重置滚动位置
   // 页面加载后自动跳转到哈希对应的项目卡片
 window.addEventListener('DOMContentLoaded', () => {
   const hash = window.location.hash.slice(1); // 去掉 #
