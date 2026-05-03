@@ -1,8 +1,8 @@
 const projects = [
-  { id: "project01", title: "惠普28A", url: "https://znjc025.com", images: ["1.png", "2.webp", "3.webp"] },
-  { id: "project02", title: "网站02", url: "https://znjc025.com", images: ["1.webp", "2.webp", "3.webp"] },
-  { id: "project03", title: "网站03", url: "https://znjc025.com", images: ["1.webp", "2.webp", "3.webp"] },
-  { id: "project04", title: "网站04", url: "https://znjc025.com", images: ["1.webp", "2.webp", "3.webp"] },
+  { id: "project01", title: "12A", url: "https://znjc025.com", images: ["1.png", "2.webp", "3.webp"] },
+  { id: "project02", title: "28A", url: "https://znjc025.com", images: ["2.png", "2.webp", "3.webp"] },
+  { id: "project03", title: "88A", url: "https://znjc025.com", images: ["3.png", "2.webp", "3.webp"] },
+  { id: "project04", title: "166A", url: "https://znjc025.com", images: ["4.png", "2.webp", "3.webp"] },
 ];
 
 const container = document.getElementById("projectList");
