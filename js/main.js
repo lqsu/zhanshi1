@@ -6,11 +6,9 @@ const projects = [
 ];
 
 const container = document.getElementById("projectList");
-let allCards = []; // 存储所有产品卡片
+let allCards = [];
 
-// ==============================================
-// 1. 渲染所有产品（默认隐藏）
-// ==============================================
+// 工具函数
 function escapeHtml(value) {
   return String(value || "")
     .replace(/&/g, "&amp;")
@@ -26,8 +24,7 @@ function getProjectIntro(project) {
 function renderSlides(project, wrapper) {
   const imageList = Array.isArray(project.images) ? project.images : [];
   imageList.forEach((fileName) => {
-    const safeFileName = escapeHtml(fileName);
-    const src = `images/${project.id}/${safeFileName}`;
+    const src = `images/${project.id}/${fileName}`;
     const slide = document.createElement("div");
     slide.className = "swiper-slide";
     slide.innerHTML = `
@@ -40,17 +37,17 @@ function renderSlides(project, wrapper) {
 }
 function createVisitButton(project) {
   const hasUrl = project.url && project.url !== "#";
-  if (!hasUrl) return `<span class="visit-btn visit-btn--disabled" aria-disabled="true">回到主页</span>`;
-  return `<a class="visit-btn" href="${escapeHtml(project.url)}" target="_blank" rel="noopener noreferrer">返回主页</a>`;
+  if (!hasUrl) return `<span class="visit-btn visit-btn--disabled">回到主页</span>`;
+  return `<a class="visit-btn" href="${escapeHtml(project.url)}" target="_blank">返回主页</a>`;
 }
 
-// 先渲染全部，但全部隐藏
+// 渲染所有卡片 默认隐藏
 projects.forEach((project, index) => {
   const card = document.createElement("article");
   card.className = "card lazy-card";
   card.dataset.index = index;
-  card.id = escapeHtml(project.id);
-  card.style.display = "none"; // 默认隐藏
+  card.id = project.id;
+  card.style.display = "none";
 
   card.innerHTML = `
     <div class="media-wrap">
@@ -85,9 +82,9 @@ const observer = new IntersectionObserver((entries) => {
     const project = card._projectData;
     const wrapper = card.querySelector(".swiper-wrapper");
     renderSlides(project, wrapper);
-    const imageCount = project.images?.length || 0;
+
     new Swiper(`.swiper-${index}`, {
-      loop: imageCount > 1,
+      loop: (project.images || []).length > 1,
       observer: true,
       observeParents: true,
       pagination: { el: `.swiper-pagination-${index}`, clickable: true },
@@ -99,36 +96,32 @@ document.querySelectorAll(".lazy-card").forEach(card => observer.observe(card));
 
 Fancybox.bind("[data-fancybox]", { Toolbar: { display: ["close"] }, hideScrollbar: false });
 
-// ==============================================
-// 2. 显示控制函数（核心）
-// ==============================================
-function showAllCards() {
+// 显示逻辑
+// 1. 默认随机显示2个
+function showRandomTwo() {
   allCards.forEach(c => c.style.display = "none");
-  const randomTwo = getRandomTwo(projects);
+  const randomTwo = [...projects].sort(() => 0.5 - Math.random()).slice(0, 2);
   randomTwo.forEach(p => {
     const card = document.getElementById(p.id);
     if (card) card.style.display = "block";
   });
 }
-function showSingleCard(projectId) {
+
+// 2. 显示全部产品
+function showAll() {
+  allCards.forEach(c => c.style.display = "block");
+}
+
+// 3. 只显示单个产品
+function showSingle(projectId) {
   allCards.forEach(c => c.style.display = "none");
   const card = document.getElementById(projectId);
   if (card) card.style.display = "block";
 }
-function getRandomTwo(list) {
-  const arr = [...list];
-  for (let i = arr.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [arr[i], arr[j]] = [arr[j], arr[i]];
-  }
-  return arr.slice(0, 2);
-}
 
-// ==============================================
-// 3. 目录导航（带全部按钮 + 默认收起 + 显眼）
-// ==============================================
+// 侧边固定目录导航
 function createFixedSideNav() {
-  // 顶部显眼目录按钮（电脑+手机都显示）
+  // 目录唤起按钮 主题蓝
   const toggleBtn = document.createElement("button");
   toggleBtn.id = "navToggleBtn";
   toggleBtn.textContent = "📋 产品目录";
@@ -139,14 +132,13 @@ function createFixedSideNav() {
   toggleBtn.style.padding = "10px 16px";
   toggleBtn.style.borderRadius = "10px";
   toggleBtn.style.border = "none";
-  toggleBtn.style.background = "#ff3c00"; // 橙色超显眼
+  toggleBtn.style.background = "#1f4b8e";
   toggleBtn.style.color = "#fff";
   toggleBtn.style.fontSize = "15px";
-  toggleBtn.style.fontWeight = "bold";
-  toggleBtn.style.boxShadow = "0 4px 12px rgba(255,60,0,0.3)";
+  toggleBtn.style.fontWeight = "500";
+  toggleBtn.style.boxShadow = "0 4px 12px rgba(31,75,142,0.25)";
   toggleBtn.style.cursor = "pointer";
 
-  // 侧边目录面板
   const sideNav = document.createElement("div");
   sideNav.id = "sideFixedNav";
   sideNav.style.position = "fixed";
@@ -156,34 +148,32 @@ function createFixedSideNav() {
   sideNav.style.background = "#fff";
   sideNav.style.padding = "20px 16px";
   sideNav.style.borderRadius = "12px";
-  sideNav.style.boxShadow = "0 4px 20px rgba(0,0,0,0.15)";
+  sideNav.style.boxShadow = "0 4px 20px rgba(0,0,0,0.12)";
   sideNav.style.zIndex = "9999";
   sideNav.style.minWidth = "150px";
-  sideNav.style.display = "none"; // 默认收起
+  sideNav.style.display = "none";
   sideNav.style.flexDirection = "column";
   sideNav.style.gap = "10px";
 
   sideNav.innerHTML = `<h4 style="margin:0 0 12px 0; font-size:16px; text-align:center; color:#333;">产品目录</h4>`;
   const navLinks = document.createElement("div");
-  navLinks.id = "navLinksContainer";
   navLinks.style.display = "flex";
   navLinks.style.flexDirection = "column";
   navLinks.style.gap = "10px";
 
-  // ========== 加【全部】按钮 ==========
+  // 全部产品按钮 同主题蓝
   const allLink = document.createElement("a");
   allLink.href = "#all";
   allLink.style.padding = "8px 12px";
   allLink.style.borderRadius = "8px";
   allLink.style.textDecoration = "none";
   allLink.style.color = "#fff";
-  allLink.style.fontSize = "14px";
-  allLink.style.fontWeight = "bold";
-  allLink.style.background = "#222";
-  allLink.innerText = "✅ 全部产品";
+  allLink.style.background = "#1f4b8e";
+  allLink.style.fontWeight = "500";
+  allLink.innerText = "全部产品";
   navLinks.appendChild(allLink);
 
-  // 产品列表
+  // 产品列表导航项
   projects.forEach((p, idx) => {
     const a = document.createElement("a");
     a.href = `#${p.id}`;
@@ -191,13 +181,18 @@ function createFixedSideNav() {
     a.style.borderRadius = "8px";
     a.style.textDecoration = "none";
     a.style.color = "#555";
-    a.style.fontSize = "14px";
-    a.style.transition = "all 0.2s";
-    a.style.background = "#f5f5f5";
+    a.style.background = "#f5f7fa";
+    a.style.transition = "all 0.25s ease";
     a.innerText = `${idx + 1}. ${p.title}`;
 
-    a.onmouseover = () => { a.style.background = "#222"; a.style.color = "#fff"; };
-    a.onmouseout = () => { a.style.background = "#f5f5f5"; a.style.color = "#555"; };
+    a.onmouseover = () => {
+      a.style.background = "#1f4b8e";
+      a.style.color = "#fff";
+    };
+    a.onmouseout = () => {
+      a.style.background = "#f5f7fa";
+      a.style.color = "#555";
+    };
     navLinks.appendChild(a);
   });
 
@@ -205,7 +200,6 @@ function createFixedSideNav() {
   document.body.appendChild(toggleBtn);
   document.body.appendChild(sideNav);
 
-  // 切换显示/隐藏
   let isOpen = false;
   toggleBtn.addEventListener("click", () => {
     isOpen = !isOpen;
@@ -213,20 +207,15 @@ function createFixedSideNav() {
     toggleBtn.textContent = isOpen ? "❌ 关闭目录" : "📋 产品目录";
   });
 
-  // 点击目录后控制显示
+  // 目录点击事件
   navLinks.addEventListener("click", (e) => {
     e.preventDefault();
-    const target = e.target;
-    if (target.tagName !== "A") return;
-
-    const href = target.getAttribute("href");
+    const href = e.target.getAttribute("href");
     if (href === "#all") {
-      showAllCards();
+      showAll();
     } else {
-      const pid = href.replace("#", "");
-      showSingleCard(pid);
+      showSingle(href.replace("#", ""));
     }
-
     // 点击后自动收起目录
     isOpen = false;
     sideNav.style.display = "none";
@@ -234,17 +223,13 @@ function createFixedSideNav() {
   });
 }
 
-// ==============================================
-// 4. 初始化：默认随机显示2个
-// ==============================================
+// 页面初始化
 window.addEventListener('DOMContentLoaded', () => {
-  showAllCards();
+  showRandomTwo();
   createFixedSideNav();
 
-  // 处理 hash 跳转
   const hash = window.location.hash.slice(1);
   if (hash && hash !== "all") {
-    const targetId = hash.split('-')[0];
-    setTimeout(() => showSingleCard(targetId), 100);
+    showSingle(hash.split('-')[0]);
   }
 });
