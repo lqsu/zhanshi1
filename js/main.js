@@ -1,5 +1,3 @@
-// 项目配置：后续新增案例时，只需要继续补充这个数组即可。
-// url 如果暂时没有真实链接，可以保留为 "#"，按钮会显示为禁用状态。
 const projects = [
   { id: "project01", title: "惠普28A", url: "https://znjc025.com", images: ["1.png", "2.webp", "3.webp", "4.webp", "5.webp", "6.webp"] },
   { id: "project02", title: "网站02", url: "https://znjc025.com", images: ["1.webp", "2.webp", "3.webp", "4.webp"] },
@@ -60,10 +58,11 @@ function createVisitButton(project) {
 
 projects.forEach((project, index) => {
   const card = document.createElement("article");
-  // ✅ 在这里加上这行，给卡片加 ID
-  card.id = escapeHtml(project.id);
   card.className = "card lazy-card";
   card.dataset.index = index;
+
+ 
+  card.id = escapeHtml(project.id);
 
   card.innerHTML = `
     <div class="media-wrap">
@@ -131,18 +130,19 @@ Fancybox.bind("[data-fancybox]", {
   Toolbar: {
     display: ["close"]
   },
-   hideScrollbar: false, // 关闭时不重置滚动位置
-  // 页面加载后自动跳转到哈希对应的项目卡片
+  
+  hideScrollbar: false,
+});
+
+
 window.addEventListener('DOMContentLoaded', () => {
-  const hash = window.location.hash.slice(1); // 去掉 #
+  const hash = window.location.hash.slice(1);
   if (!hash) return;
 
-  // 支持 #project04 或 #project04-1 这种格式
   const targetId = hash.split('-')[0];
   const targetEl = document.getElementById(targetId);
 
   if (targetEl) {
-    // 等页面渲染完成再滚动，避免错位
     setTimeout(() => {
       targetEl.scrollIntoView({
         behavior: 'smooth',
@@ -150,5 +150,4 @@ window.addEventListener('DOMContentLoaded', () => {
       });
     }, 100);
   }
-});
 });
