@@ -230,7 +230,7 @@ function createFixedSideNav() {
     // 点击后自动收起目录
     isOpen = false;
     sideNav.style.display = "none";
-    toggleBtn.textContent = "📋 产品目录";
+    toggleBtn.textContent = "产品目录";
   });
 }
 
