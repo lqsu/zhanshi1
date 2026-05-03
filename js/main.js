@@ -9,9 +9,11 @@ const projects = [
 
 const container = document.getElementById("projectList");
 
+
 function createFixedSideNav() {
   const sideNav = document.createElement("div");
   sideNav.id = "sideFixedNav";
+
   sideNav.style.position = "fixed";
   sideNav.style.top = "50%";
   sideNav.style.left = "20px";
@@ -19,14 +21,20 @@ function createFixedSideNav() {
   sideNav.style.background = "#fff";
   sideNav.style.padding = "20px 16px";
   sideNav.style.borderRadius = "12px";
-  sideNav.style.boxShadow = "0 4px 20px rgba(0,0,0,0.1)";
-  sideNav.style.zIndex = "999";
+  sideNav.style.boxShadow = "0 4px 20px rgba(0,0,0,0.15)";
+  sideNav.style.zIndex = "9999";
   sideNav.style.minWidth = "140px";
   sideNav.style.display = "flex";
   sideNav.style.flexDirection = "column";
   sideNav.style.gap = "10px";
 
-  sideNav.innerHTML = `<h4 style="margin:0 0 12px 0; font-size:16px; text-align:center; color:#333;">展示目录</h4>`;
+  sideNav.innerHTML = `<h4 style="margin:0 0 12px 0; font-size:16px; text-align:center; color:#333;">项目目录</h4>`;
+
+  const navLinks = document.createElement("div");
+  navLinks.id = "navLinksContainer";
+  navLinks.style.display = "flex";
+  navLinks.style.flexDirection = "column";
+  navLinks.style.gap = "10px";
 
   projects.forEach((p, idx) => {
     const a = document.createElement("a");
@@ -40,25 +48,68 @@ function createFixedSideNav() {
     a.style.background = "#f5f5f5";
     a.innerText = `${idx + 1}. ${p.title}`;
 
-    a.onmouseover = () => {
-      a.style.background = "#222";
-      a.style.color = "#fff";
-    };
-    a.onmouseout = () => {
-      a.style.background = "#f5f5f5";
-      a.style.color = "#555";
-    };
-
-    sideNav.appendChild(a);
+    a.onmouseover = () => { a.style.background = "#222"; a.style.color = "#fff"; };
+    a.onmouseout = () => { a.style.background = "#f5f5f5"; a.style.color = "#555"; };
+    navLinks.appendChild(a);
   });
 
-  const media = window.matchMedia("(max-width: 768px)");
-  function checkScreen() {
-    sideNav.style.display = media.matches ? "none" : "flex";
-  }
-  media.addEventListener("change", checkScreen);
-  checkScreen();
+  sideNav.appendChild(navLinks);
 
+  const toggleBtn = document.createElement("button");
+  toggleBtn.id = "navToggleBtn";
+  toggleBtn.textContent = "目录";
+  toggleBtn.style.position = "fixed";
+  toggleBtn.style.top = "15px";
+  toggleBtn.style.left = "15px";
+  toggleBtn.style.zIndex = "9999";
+  toggleBtn.style.padding = "8px 14px";
+  toggleBtn.style.borderRadius = "8px";
+  toggleBtn.style.border = "none";
+  toggleBtn.style.background = "rgba(0,0,0,0.4)"; // 半透明黑色
+  toggleBtn.style.color = "#fff";
+  toggleBtn.style.fontSize = "14px";
+  toggleBtn.style.backdropFilter = "blur(4px)"; // 磨砂玻璃效果
+  toggleBtn.style.display = "none";
+
+  document.body.appendChild(toggleBtn);
+
+  let isMobile = false;
+  function updateLayout() {
+    isMobile = window.innerWidth <= 768;
+    if (isMobile) {
+      sideNav.style.display = "none";
+      toggleBtn.style.display = "block";
+    } else {
+      sideNav.style.display = "flex";
+      toggleBtn.style.display = "none";
+    }
+  }
+
+  let isOpen = false;
+  toggleBtn.addEventListener("click", () => {
+    isOpen = !isOpen;
+    if (isOpen) {
+      sideNav.style.display = "flex";
+      sideNav.style.left = "10px";
+      sideNav.style.top = "50%";
+      sideNav.style.transform = "translateY(-50%)";
+      toggleBtn.textContent = "关闭";
+    } else {
+      sideNav.style.display = "none";
+      toggleBtn.textContent = "目录";
+    }
+  });
+
+  navLinks.addEventListener("click", (e) => {
+    if (isMobile && e.target.tagName === "A") {
+      isOpen = false;
+      sideNav.style.display = "none";
+      toggleBtn.textContent = "目录";
+    }
+  });
+
+  window.addEventListener("resize", updateLayout);
+  updateLayout();
   document.body.appendChild(sideNav);
 }
 createFixedSideNav();
@@ -99,7 +150,7 @@ function createVisitButton(project) {
     return `<span class="visit-btn visit-btn--disabled" aria-disabled="true">回到主页</span>`;
   }
   return `
-    <a class="visit-btn" href="${escapeHtml(project.url)}" target="_blank" rel="noopener noreferrer">返回主页</a>
+    <a class="visit-btn" href="${escapeHtml(project.url)}" target="_blank" rel="noopener noreferrer">Visit Website</a>
   `;
 }
 
